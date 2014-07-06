@@ -15,8 +15,7 @@ class UsersController extends AppController
 {
     public $name = 'Users';
     public $uses = array('User');
-    public $helpers = array('Html', 'Form', 'FormHidden');
-    public $layout = 'base';
+    public $layout = 'login';
 
     /**
      * beforeFilter
@@ -30,20 +29,18 @@ class UsersController extends AppController
         $this->Auth->allow(); //認証なしで入れるページ
     }
 
-    /**
+     /**
      * logout ログアウトページ
      * @param:
      * @author: T.Kobashi
      * @since: 1.0.0
      */
-    public function logout()
+    public function login()
     {
-        //ログアウトの処理
-        if($this->me['is_login']) {
-            $this->Auth->logout();
-            $this->redirect($this->request->referer()); // 元いたページにリダイレクト
+        // ログイン状態ならトップへ
+        if ($this->me['is_login']) {
+            $this->redirect(array('controller' => '/', 'action' => 'index'));
         }
-        $this->redirect(array('controller' => '/', 'action' => 'index'));
     }
 
     /**
@@ -117,6 +114,23 @@ class UsersController extends AppController
         }
     }
 
+    /**
+     * logout ログアウトページ
+     * @param:
+     * @author: T.Kobashi
+     * @since: 1.0.0
+     */
+    public function logout()
+    {
+        //ログアウトの処理
+        if($this->me['is_login']) {
+            $this->Auth->logout();
+            $this->redirect($this->request->referer()); // 元いたページにリダイレクト
+        }
+        $this->redirect(array('controller' => '/', 'action' => 'index'));
+    }
+
+    
     /**
      * loginCallback Facebook Register後コールバック
      * @param:
@@ -224,4 +238,5 @@ class UsersController extends AppController
         $url = $facebook->getLoginUrl($option);
         $this->redirect($url);
     }
+
 }
