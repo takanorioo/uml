@@ -11,7 +11,6 @@ class Label extends AppModel {
     {
         $result = $this->find('all', array(
             'conditions' => array(
-                'Project.user_id' => $user_id,
                 'Label.project_id' => $project_id,
             ),
             'joins' => array(
