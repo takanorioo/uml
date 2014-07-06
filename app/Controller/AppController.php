@@ -236,7 +236,7 @@ class AppController extends Controller
         if ($this->Auth->loggedIn()) {
             $me = $User->findByFacebookUserId($this->Auth->user('facebook_user_id'));
         }
-        return $me;
+        return $me['User'];
     }
 
 
