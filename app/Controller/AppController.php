@@ -86,7 +86,6 @@ class AppController extends Controller
 
         if (!empty($this->me['is_login'])) {
 
-            pr($this->me);
 
             //ユーザID取得
             $user_id= $this->me['User']['id'];
