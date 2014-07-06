@@ -10,7 +10,10 @@ class Project extends AppModel {
     {
         $result = $this->find('all', array(
             'conditions' => array(
-            	'Project.user_id' => $user_id,
+                'or' => array(
+                    array('Project.user_id' => $user_id,),
+                    array('Project.type' => '0'),
+                 ),
             )
         ));
         return $result;
