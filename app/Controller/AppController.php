@@ -206,7 +206,7 @@ class AppController extends Controller
         return array(
             'is_login' => $this->Auth->loggedIn(),
             'token' => session_id(),
-            'User' => $this->Auth->user()
+            'User' => $this->getUser()
             );
     }
 
