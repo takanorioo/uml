@@ -1,3 +1,82 @@
+<script>
+
+
+  $(document).ready(function(){
+
+    $html = $(".modelscript").text();
+    $html = $html.toLowerCase()
+    $html = $html.replace(/delete/g,"deletes");
+    $html = $html.replace(/date/g,"String");
+    $html = $html.replace(/string/g,"String");
+    $html = $html.replace(/boolean/g,"Boolean");
+    $html = $html.replace(/integer/g,"Integer");
+    $(".modelscript").html($html);
+
+    $html = $(".testscript").text();
+    $html = $html.replace(/delete/g,"deletes");
+    $html = $html.toLowerCase()
+    $(".testscript").html($html);
+  });
+
+  $(function() {
+
+    $(".modelscript").keyup(function(){
+      setBlobModelUrl("model_download", $(".modelscript").text());
+    });
+
+    $(".modelscript").keyup(); 
+
+  });
+
+  $(function() {
+
+    $(".testscript").keyup(function(){
+      setBlobTestlUrl("test_download", $(".testscript").text());
+    });
+
+    $(".testscript").keyup(); 
+
+  });
+
+  function setBlobModelUrl(id, content) {
+
+   // 指定されたデータを保持するBlobを作成する。
+   var blob = new Blob([ content ], { "type" : "application/x-msdownload" });
+   
+   // Aタグのhref属性にBlobオブジェクトを設定する。
+   window.URL = window.URL || window.webkitURL;
+   $("#" + id).attr("href", window.URL.createObjectURL(blob));
+   $("#" + id).attr("download", "model_script.use");
+   
+ }
+
+ function setBlobTestlUrl(id, content) {
+
+   // 指定されたデータを保持するBlobを作成する。
+   var blob = new Blob([ content ], { "type" : "application/x-msdownload" });
+   
+   // Aタグのhref属性にBlobオブジェクトを設定する。
+   window.URL = window.URL || window.webkitURL;
+   $("#" + id).attr("href", window.URL.createObjectURL(blob));
+   $("#" + id).attr("download", "test_script.txt");
+   
+ }
+
+</script>
+
+
+<div class="row">
+  <div class="col-md-12 ">
+  <sapn style="font-size: 30px;">Model Generate Script (.use)
+  <a id="model_download" target="_blank"> > Download <img src="/<?php echo $base_dir;?>/img/download.png"></a>
+  </span>
+  <br>
+  <sapn style="font-size: 30px;">Test Script (.txt)
+  <a id="test_download" target="_blank"> > Download <img src="/<?php echo $base_dir;?>/img/download.png"></a>
+    <PRE  class = "modelscript" style="font-size: 10px;display: none;">
+  </span>
+
+model Project
 
 -- classes
 
@@ -5,7 +84,7 @@
 class <?php echo h($elements[$i]['Label']['name']);?>
 
 
-<?php if(!empty($elements[$i]['Attribute'])): ?>
+<?php if(!empty($elements[$i]['Attribute']) || ($elements[$i]['Label']['id'] == $label['Label']['id'])): ?>
 attributes
 <?php if($elements[$i]['Label']['id'] == $label['Label']['id']): ?>
   result : Boolean
@@ -21,9 +100,11 @@ attributes
 operations
 
 <?php for($j = 0; $j < count($elements[$i]['Method']); $j++): ?>
- <?php echo h($elements[$i]['Method'][$j]['name']);?> : Boolean = true
+ <?php echo h($elements[$i]['Method'][$j]['name']);?>() : Boolean = true
 <?php endfor; ?>
 
+end
+<?php else: ?>
 end
 <?php endif; ?>
 
@@ -35,8 +116,8 @@ end
 <?php for($i = 0; $i < count($elements); $i++): ?>
 <?php for($j = 0; $j < count($elements[$i]['Relation']); $j++)  : ?>
 association access_<?php echo h($elements[$i]['Relation'][$j]['id']);?> between
-	<?php echo h($elements[$i]['Label']['name']);?>[1..*]
-	<?php echo h($elements[$i]['Relation'][$j]['name']);?>[1..*]
+  <?php echo h($elements[$i]['Label']['name']);?>[1]
+  <?php echo h($elements[$i]['Relation'][$j]['name']);?>[1]
 end
 <?php endfor; ?>
 <?php endfor; ?>
@@ -45,6 +126,25 @@ end
 -- OCL constraints
 
 
+constraints
+
+context <?php echo h($label['Label']['name']);?>  
+  inv <?php echo h($label['Label']['name']);?>   :
+   if self.show_ui.administrator.access_right = true and
+      self.show_ui.administrator.is_reqular_user = true 
+   then
+    self.result = true
+   else
+    self.result = false
+  endif   
+
+
+
+    </PRE>
+  </div>
+
+  <div class="col-md-6">
+    <PRE class = "testscript" style="font-size: 10px;display: none;">
 
 -- Test Case
 
@@ -79,4 +179,11 @@ end
 
 -- Execute Method
 
-!set RBAC.result := RBAC.check_access_permission(User_Data, Role, Right)
+!set <?php echo h($label['Label']['name']);?>.result := <?php echo h($label['Label']['name']);?>.<?php echo h($label['Method']['name']);?>()
+
+    </PRE>
+  </div>
+</div>
+
+
+

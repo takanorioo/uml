@@ -145,7 +145,7 @@ class AppController extends Controller
                     //メソッドの長さを計算
                     for($j = 0; $j < count($elements[$i]['Method']); $j++) {
                         if(!empty($elements[$i]['Method'])) {
-                            $methods[$elements[$i]['Method'][$j]['id']] = $elements[$i]['Method'][$j]['name'];
+                            $methods[$elements[$i]['Method'][$j]['id']] = $elements[$i]['Label']['name']." : ".$elements[$i]['Method'][$j]['name'];
                             if(strlen($elements[$i]['Method'][$j]['name']) > 12) {
                                 $num = strlen($elements[$i]['Method'][$j]['name']);
                                 $tmp_width = 110 + ($num - 12) * 8 ;

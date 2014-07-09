@@ -57,6 +57,8 @@
   echo $this->Html->script(array('setlayout'));
   echo $this->Html->script(array('main'));
 
+  echo $this->Html->script(array('blob'));
+
   echo $this->fetch('script');
   ?>
 

@@ -33,26 +33,16 @@ $(window).load(function(){
 						<!-- Access Control -->
 						<?php if ($security_requirement[$i-1]['Countermeasure']['id'] == 1): ?>
 							<td> <span class = "red">"<?php echo $security_requirement[$i-1]['CountermeasureBind'][0]['Label']['name'];?>"</span> have access permisson. </td>
-							<?php $conditions .= "attribute[]="; ?>
-							<?php $conditions .= $security_requirement[$i-1]['CountermeasureBind'][0]['Label']['id'];?>
-							<?php $conditions .= ".access_right"; ?>
-							<?php $conditions .= ".2"; ?>
 						<?php endif; ?>
 
 						<!-- I & A -->
 						<?php if ($security_requirement[$i-1]['Countermeasure']['id'] == 2): ?>
 							<td> <span class = "red">"<?php echo $security_requirement[$i-1]['CountermeasureBind'][0]['Label']['name'];?>"</span> is regular user. </td>
-							<?php $conditions .= "attribute[]="; ?>
-							<?php $conditions .= $security_requirement[$i-1]['CountermeasureBind'][0]['Label']['id'];?>
-							<?php $conditions .= ".is_reqular_user"; ?>
-							<?php $conditions .= ".2"; ?>
 						<?php endif; ?>
 
 						<!-- Input Data and Validation -->
 						<?php if ($security_requirement[$i-1]['Countermeasure']['id'] == 3): ?>
-							<td> Use valid input data in <span class = "red">"<?php echo $security_requirement[$i-1]['CountermeasureBind'][0]['Label']['name'];?>"</span>. </td>
-							<?php $conditions .= $security_requirement[$i-1]['CountermeasureBind'][0]['Label']['id'];?>
-							<?php $conditions .= ".is_user"; ?>
+							<td> Use valid input data in <span class = "red">"<?php echo $security_requirement[$i-1]['CountermeasureBind'][0]['Label']['name'];?>"</span>. </td>>
 						<?php endif; ?>
 
 					<?php else: ?>
@@ -60,30 +50,16 @@ $(window).load(function(){
 						<!-- Access Control -->
 						<?php if ($security_requirement[$i-1]['Countermeasure']['id'] == 1): ?>
 							<td> <span class = "red">"<?php echo $security_requirement[$i-1]['CountermeasureBind'][0]['Label']['name'];?>"</span> have access permisson. </td>
-							<?php $conditions .= "&"; ?>
-							<?php $conditions .= "attribute[]="; ?>
-							<?php $conditions .= $security_requirement[$i-1]['CountermeasureBind'][0]['Label']['id'];?>
-							<?php $conditions .= ".access_right"; ?>
-							<?php $conditions .= ".2"; ?>
 						<?php endif; ?>
 
 						<!-- I & A -->
 						<?php if ($security_requirement[$i-1]['Countermeasure']['id'] == 2): ?>
 							<td> <span class = "red">"<?php echo $security_requirement[$i-1]['CountermeasureBind'][0]['Label']['name'];?>"</span> is regular user. </td>
-							<?php $conditions .= "&"; ?>
-							<?php $conditions .= "attribute[]="; ?>
-							<?php $conditions .= $security_requirement[$i-1]['CountermeasureBind'][0]['Label']['id'];?>
-							<?php $conditions .= ".is_reqular_user"; ?>
-							<?php $conditions .= ".2"; ?>
 						<?php endif; ?>
 
 						<!-- Input Data and Validation -->
 						<?php if ($security_requirement[$i-1]['Countermeasure']['id'] == 3): ?>
 							<td> Use valid input data in <span class = "red">"<?php echo $security_requirement[$i-1]['CountermeasureBind'][0]['Label']['name'];?>"</span>. </td>
-							<?php $conditions .= "&"; ?>
-							<?php $conditions .= "attribute[]="; ?>
-							<?php $conditions .= $security_requirement[$i-1]['CountermeasureBind'][0]['Label']['id'];?>
-							<?php $conditions .= ".is_user"; ?>
 						<?php endif; ?>
 
 					<?php endif; ?>

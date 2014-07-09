@@ -19,7 +19,8 @@ class ElementController extends AppController
         'Countermeasure',
         'Pattern',
         'Project',
-        'SecurityRequirement'
+        'SecurityRequirement',
+        'SecurityDesignRequirement'
         );
     public $helpers = array('Html', 'Form');
     public $layout = 'base';
@@ -226,6 +227,7 @@ class ElementController extends AppController
                 $this->Label->rollback();
                 throw new InternalErrorException();
             }
+
             $label_id = $this->Label->id;
 
             $this->Label->commit();
@@ -247,6 +249,7 @@ class ElementController extends AppController
                     $data['Attribute']['label_id'] = $label_id;
 
                     if (!$this->Attribute->save($data['Attribute'],false,array('type','name','label_id'))) {
+                        $this->Label->rollback();
                         $this->Attribute->rollback();
                         throw new InternalErrorException();
                     }
@@ -255,23 +258,25 @@ class ElementController extends AppController
             }
 
             for($i = 0; $i < count($request_data['Method']['type']); $i++) {
+                if(!empty($request_data['Method']['type'][$i]))  {
 
                     //初期化
-                $data = array();
+                    $data = array();
 
-                    // // トランザクション処理
-                $this->Method->create();
-                $this->Method->begin();
+                        // // トランザクション処理
+                    $this->Method->create();
+                    $this->Method->begin();
 
-                $data['Method']['type'] = $request_data['Method']['type'][$i];
-                $data['Method']['name'] = $request_data['Method']['name'][$i];
-                $data['Method']['label_id'] = $label_id;
+                    $data['Method']['type'] = $request_data['Method']['type'][$i];
+                    $data['Method']['name'] = $request_data['Method']['name'][$i];
+                    $data['Method']['label_id'] = $label_id;
 
-                if (!$this->Method->save($data['Method'],false,array('type','name','label_id'))) {
-                    $this->Method->rollback();
-                    throw new InternalErrorException();
+                    if (!$this->Method->save($data['Method'],false,array('type','name','label_id'))) {
+                        $this->Method->rollback();
+                        throw new InternalErrorException();
+                    }
+                    $this->Method->commit();
                 }
-                $this->Method->commit();
             }
             if(!empty($request_data['Relation']))  {
 
@@ -334,8 +339,62 @@ class ElementController extends AppController
      * @author: T.Kobashi
      * @since: 1.0.0
      */
-    public function relation_delete($id = null)
+    public function attribute_delete($id = null)
     {
+        //不正アクセス
+        if (!isset($id)) {
+            throw new BadRequestException();
+        }
+
+        // トランザクション処理始め
+        $this->Attribute->begin();
+
+        if (!$this->Attribute->delete($id)) {
+            $this->Attribute->rollback();
+            throw new BadRequestException();
+        }
+
+        $this->Attribute->commit();
+
+        $this->Session->setFlash('You successfully delete Attribute.', 'default', array('class' => 'alert alert-success'));
+        $this->redirect($this->referer());
+    }
+
+     /**
+     * delete
+     * @param:
+     * @author: T.Kobashi
+     * @since: 1.0.0
+     */
+     public function method_delete($id = null)
+     {
+        //不正アクセス
+        if (!isset($id)) {
+            throw new BadRequestException();
+        }
+
+        // トランザクション処理始め
+        $this->Method->begin();
+
+        if (!$this->Method->delete($id)) {
+            $this->Method->rollback();
+            throw new BadRequestException();
+        }
+
+        $this->Method->commit();
+
+        $this->Session->setFlash('You successfully delete Method.', 'default', array('class' => 'alert alert-success'));
+        $this->redirect($this->referer());
+    }
+
+     /**
+     * delete
+     * @param:
+     * @author: T.Kobashi
+     * @since: 1.0.0
+     */
+     public function relation_delete($id = null)
+     {
         //不正アクセス
         if (!isset($id)) {
             throw new BadRequestException();
@@ -352,7 +411,7 @@ class ElementController extends AppController
         $this->Relation->commit();
 
         $this->Session->setFlash('You successfully delete Relation.', 'default', array('class' => 'alert alert-success'));
-        $this->redirect(array('controller' => 'Top', 'action' => 'index'));
+        $this->redirect($this->referer());
     }
 
 
@@ -398,7 +457,7 @@ class ElementController extends AppController
             }
             
             $this->Session->setFlash('You successfully Set Target Function.', 'default', array('class' => 'alert alert-success'));
-            $this->redirect(array('controller' => 'Top', 'action' => 'index'));
+            $this->redirect(array('controller' => 'Element', 'action' => 'target_list'));
         }
     }
 
@@ -421,9 +480,15 @@ class ElementController extends AppController
         //データの加工
         for($i = 0; $i < count($security_requirements); $i++) {
             if (!in_array($security_requirements[$i]['Method']['id'], $target_methods)) {
+
+                // メソッドからラベル名を取得
+                $label = array();
+                $label = $this->Method->getLabel($security_requirements[$i]['Method']['id']);
+
+
                 $target_methods[] = $security_requirements[$i]['Method']['id'];
                 $target_methods['id'][] = $security_requirements[$i]['Method']['id'];
-                $target_methods['name'][] = $security_requirements[$i]['Method']['name'];
+                $target_methods['name'][] = $label['Label']['name']." : ".$security_requirements[$i]['Method']['name'];
             }
         }
         $this->set('target_methods', $target_methods);
@@ -446,12 +511,12 @@ class ElementController extends AppController
 
             foreach ($movies->movie->characters->character as $character) {
                echo $character->name, ' played by ', $character->actor, PHP_EOL;
-           }
+            }
 
-       } else {
-        echo "$filename は存在しません";
+        } else {
+            echo "$filename は存在しません";
+        }
     }
-}
 
     /**
      * delete
@@ -459,44 +524,98 @@ class ElementController extends AppController
      * @author: T.Kobashi
      * @since: 1.0.0
      */
-    public function testcasedata($method_id = null)
+    public function sr_testcasedata($method_id = null)
     {
-        $attribute = $this->request->query['attribute'];
 
         //不正アクセス
         if (!isset($method_id)) {
             throw new BadRequestException();
         }
+        
+        if(!empty($this->request->query['attribute'])) {
 
-        for($i = 0; $i < count($attribute); $i++) {
+            $attribute = $this->request->query['attribute'];
 
-            //初期化
-            $data = array();
-            $attribute_detail = array();
+            for($i = 0; $i < count($attribute); $i++) {
 
-            $attribute_detail = explode(".", $attribute[$i]);
+                //初期化
+                $data = array();
+                $attribute_detail = array();
+
+                $attribute_detail = explode(".", $attribute[$i]);
 
 
-            $attribute_id = $this->Attribute->getAttributeIdByName($attribute_detail[1]);
+                $attribute_id = $this->Attribute->getAttributeIdByName($attribute_detail[1]);
 
-            if(empty($attribute_id['Attribute']['id'])) {
+                if(empty($attribute_id['Attribute']['id'])) {
 
-                // トランザクション処理
-                $this->Attribute->create();
-                $this->Attribute->begin();
+                    // トランザクション処理
+                    $this->Attribute->create();
+                    $this->Attribute->begin();
 
-                $data['Attribute']['type'] = $attribute_detail[2];
-                $data['Attribute']['name'] = $attribute_detail[1];
-                $data['Attribute']['label_id'] = $attribute_detail[0];
+                    $data['Attribute']['type'] = $attribute_detail[2];
+                    $data['Attribute']['name'] = $attribute_detail[1];
+                    $data['Attribute']['label_id'] = $attribute_detail[0];
 
-                if (!$this->Attribute->save($data['Attribute'],false,array('type','name','label_id'))) {
-                    $this->Attribute->rollback();
-                    throw new InternalErrorException();
+                    if (!$this->Attribute->save($data['Attribute'],false,array('type','name','label_id'))) {
+                        $this->Attribute->rollback();
+                        throw new InternalErrorException();
+                    }
+                    $this->Attribute->commit();
                 }
-                $this->Attribute->commit();
             }
         }
-        $this->redirect(array('controller' => 'Element', 'action' => 'testcase', $method_id));
+        $this->redirect(array('controller' => 'Element', 'action' => 'sr_testcase', $method_id));
+    }
+
+    /**
+     * delete
+     * @param:
+     * @author: T.Kobashi
+     * @since: 1.0.0
+     */
+    public function sdr_testcasedata($method_id = null)
+    {
+
+        //不正アクセス
+        if (!isset($method_id)) {
+            throw new BadRequestException();
+        }
+        
+        if(!empty($this->request->query['attribute'])) {
+
+            $attribute = $this->request->query['attribute'];
+
+            for($i = 0; $i < count($attribute); $i++) {
+
+                //初期化
+                $data = array();
+                $attribute_detail = array();
+
+                $attribute_detail = explode(".", $attribute[$i]);
+
+
+                $attribute_id = $this->Attribute->getAttributeIdByName($attribute_detail[1]);
+
+                if(empty($attribute_id['Attribute']['id'])) {
+
+                    // トランザクション処理
+                    $this->Attribute->create();
+                    $this->Attribute->begin();
+
+                    $data['Attribute']['type'] = $attribute_detail[2];
+                    $data['Attribute']['name'] = $attribute_detail[1];
+                    $data['Attribute']['label_id'] = $attribute_detail[0];
+
+                    if (!$this->Attribute->save($data['Attribute'],false,array('type','name','label_id'))) {
+                        $this->Attribute->rollback();
+                        throw new InternalErrorException();
+                    }
+                    $this->Attribute->commit();
+                }
+            }
+        }        
+        $this->redirect(array('controller' => 'Element', 'action' => 'sdr_testcase', $method_id));
     }
 
      /**
@@ -505,8 +624,8 @@ class ElementController extends AppController
      * @author: T.Kobashi
      * @since: 1.0.0
      */
-    public function testcase($method_id = null)
-    {
+     public function sr_testcase($method_id = null)
+     {
                //プロジェクトIDの取得   
         $project_id = $this->Session->read('Project.id');
 
@@ -524,8 +643,6 @@ class ElementController extends AppController
 
         $security_requirement_count = pow (2, count($security_requirement));
 
-        $conditions = "?";
-        $this->set('conditions', $conditions);
         $this->set('security_requirement', $security_requirement);
         $this->set('security_requirement_count', $security_requirement_count);
 
@@ -533,37 +650,73 @@ class ElementController extends AppController
         //テストの実行
         if (!empty($this->request->data['executeTest'])) {
 
-            $this->layout = false;
-
 
             $label = $this->Method->getLabel($method_id);
-            $this->set('label', $label);
 
-            // $countermeasures = $this->request->data['Countermeasure'];
-            // $this->set('countermeasures', $countermeasures);
+            $this->set('label', $label);
 
             $attributes = $this->request->data['Attribute']['name'];
 
             $attribute_ids = array_keys($attributes);
             for($i = 0; $i < count($attribute_ids); $i++) {
-              $attribute_name = $this->Attribute->getAttributeName($attribute_ids[$i]);
-              $attributes[$attribute_ids[$i]]['name'] = $attribute_name['Label']['name'];
-              $attributes[$attribute_ids[$i]]['attribute_name'] = $attribute_name['Attribute']['name'];
+                  $attribute_name = $this->Attribute->getAttributeName($attribute_ids[$i]);
+                  $attributes[$attribute_ids[$i]]['name'] = $attribute_name['Label']['name'];
+                  $attributes[$attribute_ids[$i]]['attribute_name'] = $attribute_name['Attribute']['name'];
             }
             $this->set('attributes', $attributes);
 
             $this->render('testscript');
-            $str = strtolower($this->render('testscript'));
-            // ヘッダー指定
+        }
+    }
+
+    /**
+     * delete
+     * @param:
+     * @author: T.Kobashi
+     * @since: 1.0.0
+         */
+    public function sdr_testcase($method_id = null) 
+    {
+        //プロジェクトIDの取得   
+        $project_id = $this->Session->read('Project.id');
+
+        //不正アクセス
+        if (!isset($method_id)) {
+            throw new BadRequestException();
+        }
+
+        //Method情報を取得
+        $method = $this->Method->getMethod($method_id);
+        $this->set('method', $method);
+
+        //Method情報を取得
+        $security_design_requirement = $this->SecurityDesignRequirement->getSecurityDesignRequirement($method_id);
+        $this->set('security_design_requirement', $security_design_requirement);
+
+        $security_design_requirement_count = pow (2, count($security_design_requirement));
+        $this->set('security_design_requirement_count', $security_design_requirement_count);
+
+        $td_rowspan = count($security_design_requirement) * 2 + 2;
+        $this->set('td_rowspan', $td_rowspan);
 
 
-            $file = "test.txt";
-            header("Content-type: text/plain");
-            header("Content-Disposition: attachment; filename=$file");
+        //テストの実行
+        if (!empty($this->request->data['executeTest'])) {
 
-            // readfile($str);
-            return;
 
-         }
+            $label = $this->Method->getLabel($method_id);
+            $this->set('label', $label);
+
+            $attributes = $this->request->data['Attribute']['name'];
+
+            $attribute_ids = array_keys($attributes);
+            for($i = 0; $i < count($attribute_ids); $i++) {
+                $attribute_name = $this->Attribute->getAttributeName($attribute_ids[$i]);
+                $attributes[$attribute_ids[$i]]['name'] = $attribute_name['Label']['name'];
+                $attributes[$attribute_ids[$i]]['attribute_name'] = $attribute_name['Attribute']['name'];
+            }
+            $this->set('attributes', $attributes);
+            $this->render('testscript');
+        }
     }
 }

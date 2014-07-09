@@ -9,7 +9,7 @@
         <tr style="background: lightgray;">
           <th>#</th>
           <td>Countermeasure</td>
-          <td>#</td>
+          <td style="width: 310px;">Delete from Selected Countermeasure</td>
         </tr>
       </thead>
       <tbody>
@@ -17,7 +17,7 @@
         <tr>
           <td><?php echo $i + 1;?></td>
           <td><?php echo h($security_requirement[$i]['Countermeasure']['name']);?></td>
-          <td>Delete</td>
+          <td style="text-align: center;"><img src="/<?php echo $base_dir;?>/img/delete_icon.png" style="margin-top: 5px;"></td>
         </tr>
         <?php endfor; ?>
 
@@ -140,8 +140,10 @@
 	</tbody>
 </table>
 
+<h3><a href="/<?php echo $base_dir;?>/element/sr_testcasedata/<?php echo h($method['Method']['id']);?><? echo $conditions?>" class ="btn btn-primary">Input Concreate Value</a></h3>
+
+
 <?php else: ?>
 	Please Set Security Requirement
 <?php endif; ?>
 
-<h3><a href="/<?php echo $base_dir;?>/element/testcasedata/<?php echo h($method['Method']['id']);?><? echo $conditions?>" class ="btn btn-primary">Input Concreate Value</a></h3>

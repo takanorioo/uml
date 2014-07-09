@@ -126,15 +126,15 @@ var all = [
 	<div>
 		<div class="row">
 			<div style="padding-top: 20px;">
-				<p style="font-size: 40px;margin-left: 10px;">Element : <?php echo $elemet['Label']['name'];?></p>
-				<a class="btn btn-info col-md-2" id="edit" href="#" style="margin: 10px;">Edit</a>
-				<a class="btn btn-danger col-md-2" href="/<?php echo $base_dir;?>/element/delete/<?php echo $label_id;?>" onclick="return confirm('Are You Sure ?');" style="margin: 10px;">Delete</a>
+				<span style="font-size: 40px;margin-left: 10px;">Element : <?php echo $elemet['Label']['name'];?></span>
+				
+				<a  href="/<?php echo $base_dir;?>/element/delete/<?php echo $label_id;?>" onclick="return confirm('Are You Sure ?');" style="margin: 10px;">Delete: <img src="/<?php echo $base_dir;?>/img/delete_icon.png" style="margin-top: -7px;"></a>
 			</div>
 		</div>
 
 		<?php echo $this->Form->create('Label', array('id' => false)); ?>
 
-		<div id="toggel">
+		<div>
 			<div class="row" style = "padding-top:40px">
 				<div class="col-md-8 well">
 					<table class="table table-hover">
@@ -163,6 +163,7 @@ var all = [
 							<tr>
 								<th>Type</th>
 								<th>AttributeName</th>
+								<th>Delete</th>
 							</tr>
 						</thead>
 						<tbody class="add_attribute">
@@ -173,6 +174,8 @@ var all = [
 										<td><?php echo $this->Form->input('Attribute.type.'.$i, array('label' => false, 'div' => false, 'id' => false, 'type' => 'select', 'options' => $TYPE, 'class' => 'form-control', 'error'=>false)); ?>
 										</td>
 										<td><?php echo $this->Form->input('Attribute.name.'.$i, array('label' => false, 'div' => false, 'id' => '', 'type' => 'text', 'class' => 'form-control', 'placeholder' => 'AttributeName', 'error'=>false)); ?>
+										</td>
+										<td><a href="/<?php echo $base_dir;?>/element/attribute_delete/<?php echo $elemet['Attribute']['id'][$i];?>" onclick="return confirm('Are You Sure ?');" style="margin: 10px;font-size: 20px;color: red;"><img src="/<?php echo $base_dir;?>/img/delete_icon.png" style="margin-top: 5px;"></a>
 										</td>
 									</tr>
 								<?php endfor; ?>
@@ -189,6 +192,7 @@ var all = [
 							<tr>
 								<th>Return</th>
 								<th>MethodName</th>
+								<th>Delete</th>
 							</tr>
 						</thead>
 						<tbody class="add_method">
@@ -200,7 +204,10 @@ var all = [
 										</td>
 										<td><?php echo $this->Form->input('Method.name.'.$i, array('label' => false, 'div' => false, 'id' => '', 'type' => 'text', 'class' => 'form-control', 'placeholder' => 'AttributeName', 'error'=>false)); ?>
 										</td>
+										<td><a href="/<?php echo $base_dir;?>/element/method_delete/<?php echo $elemet['Method']['id'][$i];?>" onclick="return confirm('Are You Sure ?');" style="margin: 10px;font-size: 20px;color: red;"><img src="/<?php echo $base_dir;?>/img/delete_icon.png" style="margin-top: 5px;"></a>
+										</td>
 									</tr>
+
 								<?php endfor; ?>
 							<?php endif; ?>
 						</tbody>
@@ -214,6 +221,7 @@ var all = [
 						<thead>
 							<tr>
 								<th>Relation</th>
+								<th>Delete</th>
 							</tr>
 						</thead>
 						<tbody class="add_relation">
@@ -223,7 +231,7 @@ var all = [
 										<?php echo $this->Form->hidden('Relation.id.'.$i, array('label' => false, 'div' => false, 'id' => false)); ?>
 										<td><?php echo $this->Form->input('Relation.label_relation_id.'.$i, array('label' => false, 'div' => false, 'id' => false, 'type' => 'select', 'options' => $relation, 'class' => 'form-control', 'empty' => '----', 'error'=>false)); ?>
 										</td>
-										<td><a href="/<?php echo $base_dir;?>/element/relation_delete/<?php echo $elemet['Relation']['id'][$i];?>" onclick="return confirm('Are You Sure ?');" style="margin: 10px;font-size: 20px;color: red;">Delete</a>
+										<td><a href="/<?php echo $base_dir;?>/element/relation_delete/<?php echo $elemet['Relation']['id'][$i];?>" onclick="return confirm('Are You Sure ?');" style="margin: 10px;font-size: 20px;color: red;"><img src="/<?php echo $base_dir;?>/img/delete_icon.png" style="margin-top: 5px;"></a>
 										</td>
 									</tr>
 								</tbody>
@@ -252,11 +260,3 @@ var all = [
 	</div>
 	
 </div>
-
-
-<script>
-	$("#edit").click(function () {
-		console.log("gheo");
-		$("div#toggel").fadeToggle("slow");
-	});
-</script>

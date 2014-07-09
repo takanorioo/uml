@@ -87,7 +87,7 @@ class SecurityDesignRequirementsController extends AppController
             }
             
             $this->Session->setFlash('You successfully Set Target Function.', 'default', array('class' => 'alert alert-success'));
-            $this->redirect(array('controller' => 'SecurityDesignRequirements', 'action' => 'table', $method_id));
+            $this->redirect(array('controller' => 'SecurityDesignRequirements', 'action' => 'bind', $method_id));
         }
     }
 
@@ -174,8 +174,8 @@ class SecurityDesignRequirementsController extends AppController
                 }
             }
             
-            $this->Session->setFlash('You successfully Set Target Function.', 'default', array('class' => 'alert alert-success'));
-            // $this->redirect(array('controller' => 'Top', 'action' => 'index'));
+            $this->Session->setFlash('You successfully Bind Elements.', 'default', array('class' => 'alert alert-success'));
+            $this->redirect(array('controller' => 'SecurityDesignRequirements', 'action' => 'table', $method_id));
         }
 
     }
