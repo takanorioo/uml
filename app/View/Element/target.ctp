@@ -19,6 +19,8 @@
 
 
 <h1>Set Target Function</h1>
+
+<?php if (!empty($methods)): ?>
 <?php echo $this->Form->create('Label'); ?>
 
 <div class="row"style = "padding-top:40px">
@@ -64,5 +66,4 @@
 	<input type="hidden" name="addTargetFunction" value="addTargetFunction">
 </div>
 <?php echo $this->Form->end(); ?>
-
-
+<?php endif; ?>
