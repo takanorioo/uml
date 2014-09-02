@@ -135,14 +135,14 @@
 <?php if($elements[$i]['Label']['id'] == $security_design_requirement[$t]['PatternBind'][0]['Label']['id']): ?>
 <!-- RBAC -->
 <?php if($security_design_requirement[$t]['Pattern']['id'] == 1): ?>
-!set administrator.regulqr_user := <?php echo $elements[$i]['Label']['name']; ?>.<?php for($j = 0; $j < count($elements[$i]['Method']); $j++): ?><?php echo h($elements[$i]['Method'][$j]['name']);?><?php $rback_method = $elements[$i]['Method'][$j]['name'];?><?php endfor; ?>(<?php echo $security_design_requirement[$t]['PatternBind'][1]['Label']['name']?>,<?php echo $security_design_requirement[$t]['PatternBind'][2]['Label']['name']?>, <?php echo $security_design_requirement[$t]['PatternBind'][3]['Label']['name']?> : <?php echo $security_design_requirement[$t]['PatternBind'][3]['Label']['name']?> )
+!set administrator.access_right := <?php echo $elements[$i]['Label']['name']; ?>.<?php for($j = 0; $j < count($elements[$i]['Method']); $j++): ?><?php echo h($elements[$i]['Method'][$j]['name']);?><?php $rback_method = $elements[$i]['Method'][$j]['name'];?><?php endfor; ?>(<?php echo $security_design_requirement[$t]['PatternBind'][1]['Label']['name']?>,<?php echo $security_design_requirement[$t]['PatternBind'][2]['Label']['name']?>,<?php echo $security_design_requirement[$t]['PatternBind'][3]['Label']['name']?>)
 <?php endif; ?>
 
 <!-- Password & Use -->
 <?php if($security_design_requirement[$t]['Pattern']['id'] == 2): ?>
 <?php if(!empty($elements[$i]['Method'])): ?>
 
-!set administrator.access_right := <?php echo $elements[$i]['Label']['name']; ?>.<?php for($j = 0; $j < count($elements[$i]['Method']); $j++): ?><?php $password_and_use_method = $elements[$i]['Method'][$j]['name'];?><?php echo h($elements[$i]['Method'][$j]['name']);?><?php endfor; ?>(<?php echo $security_design_requirement[$t]['PatternBind'][2]['Label']['name']?>,<?php echo $security_design_requirement[$t]['PatternBind'][3]['Label']['name']?> )
+!set administrator.regular_user := <?php echo $elements[$i]['Label']['name']; ?>.<?php for($j = 0; $j < count($elements[$i]['Method']); $j++): ?><?php $password_and_use_method = $elements[$i]['Method'][$j]['name'];?><?php echo h($elements[$i]['Method'][$j]['name']);?><?php endfor; ?>(<?php echo $security_design_requirement[$t]['PatternBind'][2]['Label']['name']?>,<?php echo $security_design_requirement[$t]['PatternBind'][3]['Label']['name']?> )
 <?php endif; ?>
 <?php endif; ?>
 <?php endif; ?>
