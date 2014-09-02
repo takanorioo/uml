@@ -143,6 +143,7 @@ class AppController extends Controller
                     $tmp_width = 0;
 
                     //メソッドの長さを計算
+
                     for($j = 0; $j < count($elements[$i]['Method']); $j++) {
                         if(!empty($elements[$i]['Method'])) {
                             $methods[$elements[$i]['Method'][$j]['id']] = $elements[$i]['Label']['name']." : ".$elements[$i]['Method'][$j]['name'];
@@ -183,8 +184,9 @@ class AppController extends Controller
 
                     $elements[$i]['width'] = $width;
                 }
-
-                $this->set('methods', $methods);
+                if(!empty($methods)) {
+                    $this->set('methods', $methods);
+                }
             }
             $this->set('elements', $elements);
         }
