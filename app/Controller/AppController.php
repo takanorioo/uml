@@ -96,7 +96,6 @@ class AppController extends Controller
             $this->set('projects', $projects);
 
             $project_id = $this->Session->read('Project.id');
-            pr($project_id);
 
             if(empty($project_id))
             {
