@@ -134,11 +134,10 @@ class UsersController extends AppController
     {
         //ログアウトの処理
         if($this->me['is_login']) {
-            // $this->Session->destroy();
             $this->Auth->logout();
+            $this->Session->destroy();
             $this->redirect($this->request->referer()); // 元いたページにリダイレクト
         }
-
         $this->redirect(array('controller' => '/', 'action' => 'index'));
     }
 
