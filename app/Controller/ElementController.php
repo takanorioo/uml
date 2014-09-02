@@ -541,7 +541,7 @@ class ElementController extends AppController
                     $this->Attribute->begin();
 
                     if(!empty($attribute_id)) {
-                        $data['Attribute']['id'] = $attribute_id;
+                        $data['Attribute']['id'] = $attribute_id['Attribute']['id'];
                     }
 
                     $data['Attribute']['type'] = $attribute_detail[2];
@@ -594,7 +594,7 @@ class ElementController extends AppController
                     $this->Attribute->begin();
 
                     if(!empty($attribute_id)) {
-                        $data['Attribute']['id'] = $attribute_id;
+                        $data['Attribute']['id'] = $attribute_id['Attribute']['id'];
                     }
 
                     $data['Attribute']['type'] = $attribute_detail[2];
