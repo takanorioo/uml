@@ -41,6 +41,16 @@ class UsersController extends AppController
         if ($this->me['is_login']) {
             $this->redirect(array('controller' => '/', 'action' => 'index'));
         }
+
+        if (!empty($this->request->data)) {
+            if ($this->Auth->login()) {
+                 $this->redirect($this->Auth->redirect());
+            } else {
+                if (isset($this->request->data['User']['email']) && isset($this->request->data['User']['password'])) {
+                    $this->User->invalidate('login', 'メールアドレスとパスワードの組み合わせが間違っています。');
+                }
+            }
+        }
     }
 
     /**
@@ -124,6 +134,7 @@ class UsersController extends AppController
     {
         //ログアウトの処理
         if($this->me['is_login']) {
+            $this->Session->destroy();
             $this->Auth->logout();
             $this->redirect($this->request->referer()); // 元いたページにリダイレクト
         }

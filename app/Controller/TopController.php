@@ -43,7 +43,6 @@ class TopController extends AppController
      */
     public function index()
     {
-
       
         //テストの実行
         if (!empty($this->request->data['executeTest'])) {
@@ -75,7 +74,5 @@ class TopController extends AppController
             return;
 
          }
-
     }
-
 }

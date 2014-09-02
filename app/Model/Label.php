@@ -39,6 +39,30 @@ class Label extends AppModel {
         return $result;
     }
 
+    public function getPatternElements($pattern_id)
+    {
+        $result = $this->find('all', array(
+            'conditions' => array(
+                'Label.pattern_id' => $pattern_id,
+            ),
+        ));
+
+        for($i = 0; $i < count($result); $i++) {
+            for($j = 0; $j < count($result[$i]['Relation']); $j++) {
+
+                $label = $this->find('first', array(
+                    'conditions' => array(
+                        'Label.id' => $result[$i]['Relation'][$j]['label_relation_id'],
+                    ),
+                    'fields' => array("Label.name")
+                ));
+
+                $result[$i]['Relation'][$j]['name'] = $label['Label']['name'];
+            }
+        }
+        return $result;
+    }
+
     public function getElement($label_id)
     {
 

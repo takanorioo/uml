@@ -1,4 +1,3 @@
-
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja" lang="ja" xmlns:og="http://ogp.me/ns#" xmlns:fb="http://www.facebook.com/2008/fbml">
 
 <head>
@@ -25,6 +24,8 @@
   echo $this->Html->css(array('base'));
 
   echo $this->fetch('css');
+
+  echo $this->Html->script(array('joint.behaviors'));
 
   echo $this->Html->script(array('jquery-1.10.2'));
   echo $this->Html->script(array('bootstrap.min'));
@@ -59,8 +60,15 @@
 
   echo $this->Html->script(array('blob'));
 
+
+  
+
   echo $this->fetch('script');
   ?>
+
+<script type="text/javascript" src="http://canvg.googlecode.com/svn/trunk/rgbcolor.js"></script> 
+<script type="text/javascript" src="http://canvg.googlecode.com/svn/trunk/StackBlur.js"></script>
+<script type="text/javascript" src="http://canvg.googlecode.com/svn/trunk/canvg.js"></script> 
 
   <script>
     $(function() {
@@ -210,7 +218,8 @@
     <!-- /.dropdown -->
     <li class="dropdown">
       <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-        <i class="fa fa-user fa-fw"></i>  <i class="fa fa-caret-down"></i>
+        <i class="fa fa-user fa-fw"></i>
+         <i class="fa fa-caret-down"></i>
       </a>
       <ul class="dropdown-menu dropdown-user">
         <li><a href="#"><i class="fa fa-user fa-fw"></i> User Profile</a>
@@ -252,7 +261,10 @@
           <a href="/<?php echo $base_dir;?>/element/target">Set Target Function</a>
         </li>
         <li>
-          <a href="/<?php echo $base_dir;?>/element/target_list">Target Function List</a>
+          <a href="/<?php echo $base_dir;?>/element/target_list">Target Function Lists</a>
+        </li>
+        <li>
+          <a href="/<?php echo $base_dir;?>/patterns">Pattern Lists</a>
         </li>
       </ul>
       <!-- /#side-menu -->

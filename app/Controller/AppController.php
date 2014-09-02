@@ -19,7 +19,6 @@ class AppController extends Controller
                         'username' => 'email',
                         'password' => 'password'
                         ),
-                    'scope' => array('is_delete' => 0)
                     )
                 )
             ),
@@ -87,15 +86,16 @@ class AppController extends Controller
         if (!empty($this->me['is_login'])) {
 
 
+            $this->set('me', $this->me);
+
             //ユーザID取得
             $user_id= $this->me['User']['id'];
-
 
             // プロジェクト関連処理
             $projects = $this->Project->getProjects($user_id);
             $this->set('projects', $projects);
 
-            $project_id = $this->Session->read('Project.id');;
+            $project_id = $this->Session->read('Project.id');
 
             if(empty($project_id))
             {

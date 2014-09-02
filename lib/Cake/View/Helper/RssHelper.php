@@ -116,25 +116,25 @@ class RssHelper extends AppHelper {
  * Returns an RSS `<channel />` element
  *
  * @param array $attrib `<channel />` tag attributes
- * @param mixed $elements Named array elements which are converted to tags
+ * @param mixed $pattern_elements Named array elements which are converted to tags
  * @param mixed $content Content (`<item />`'s belonging to this channel
  * @return string An RSS `<channel />`
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/rss.html#RssHelper::channel
  */
-	public function channel($attrib = array(), $elements = array(), $content = null) {
-		if (!isset($elements['title']) && !empty($this->_View->pageTitle)) {
-			$elements['title'] = $this->_View->pageTitle;
+	public function channel($attrib = array(), $pattern_elements = array(), $content = null) {
+		if (!isset($pattern_elements['title']) && !empty($this->_View->pageTitle)) {
+			$pattern_elements['title'] = $this->_View->pageTitle;
 		}
-		if (!isset($elements['link'])) {
-			$elements['link'] = '/';
+		if (!isset($pattern_elements['link'])) {
+			$pattern_elements['link'] = '/';
 		}
-		if (!isset($elements['description'])) {
-			$elements['description'] = '';
+		if (!isset($pattern_elements['description'])) {
+			$pattern_elements['description'] = '';
 		}
-		$elements['link'] = $this->url($elements['link'], true);
+		$pattern_elements['link'] = $this->url($pattern_elements['link'], true);
 
 		$elems = '';
-		foreach ($elements as $elem => $data) {
+		foreach ($pattern_elements as $elem => $data) {
 			$attributes = array();
 			if (is_array($data)) {
 				if (strtolower($elem) == 'cloud') {
@@ -184,18 +184,18 @@ class RssHelper extends AppHelper {
  * Converts an array into an `<item />` element and its contents
  *
  * @param array $att The attributes of the `<item />` element
- * @param array $elements The list of elements contained in this `<item />`
+ * @param array $pattern_elements The list of elements contained in this `<item />`
  * @return string An RSS `<item />` element
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/rss.html#RssHelper::item
  */
-	public function item($att = array(), $elements = array()) {
+	public function item($att = array(), $pattern_elements = array()) {
 		$content = null;
 
-		if (isset($elements['link']) && !isset($elements['guid'])) {
-			$elements['guid'] = $elements['link'];
+		if (isset($pattern_elements['link']) && !isset($pattern_elements['guid'])) {
+			$pattern_elements['guid'] = $pattern_elements['link'];
 		}
 
-		foreach ($elements as $key => $val) {
+		foreach ($pattern_elements as $key => $val) {
 			$attrib = array();
 
 			$escape = true;
@@ -218,7 +218,7 @@ class RssHelper extends AppHelper {
 							}
 							$categories[] = $this->elem($key, $attrib, $category);
 						}
-						$elements[$key] = implode('', $categories);
+						$pattern_elements[$key] = implode('', $categories);
 						continue 2;
 					} elseif (is_array($val) && isset($val['domain'])) {
 						$attrib['domain'] = $val['domain'];
@@ -260,10 +260,10 @@ class RssHelper extends AppHelper {
 			if (!is_null($val) && $escape) {
 				$val = h($val);
 			}
-			$elements[$key] = $this->elem($key, $attrib, $val);
+			$pattern_elements[$key] = $this->elem($key, $attrib, $val);
 		}
-		if (!empty($elements)) {
-			$content = implode('', $elements);
+		if (!empty($pattern_elements)) {
+			$content = implode('', $pattern_elements);
 		}
 		return $this->elem('item', (array)$att, $content, !($content === null));
 	}

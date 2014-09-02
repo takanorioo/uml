@@ -14,4 +14,14 @@ class Pattern extends AppModel {
         ));
         return $result;
     }
+
+    public function getPattern($pattern_id) {
+
+        $result = $this->find('first', array(
+            'conditions' => array(
+            	'Pattern.id' => $pattern_id,
+            ),
+        ));
+        return $result;
+    }
 }

@@ -70,15 +70,15 @@ var all = [
 
 </script>
 
+
+
 <div id="tabcontent">
 	<div class="row" style="padding-top: 40px;position: absolute;right: 50px;">
 			<input id="set" type="button" name ="set" class ="btn btn-primary" value="Set Layout" style="font-size: 20px;">
-			<!-- <input id="set" type="button" name ="set" class ="btn btn-info" value="Import XML" style="font-size: 20px;"> -->
 	</div>
 	<div class="row"style = "padding-top:20px">
 		<div id="world"></div>
 	</div>
-	
 </div>
 
 

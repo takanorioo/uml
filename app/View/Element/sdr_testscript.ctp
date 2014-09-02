@@ -66,89 +66,42 @@
 
 
 <div class="row">
+
   <div class="col-md-12 ">
-  <sapn style="font-size: 30px;">Model Generate Script (.use)
-  <a id="model_download" target="_blank"> > Download <img src="/<?php echo $base_dir;?>/img/download.png"></a>
-  </span>
-  <br>
-  <sapn style="font-size: 30px;">Test Script (.txt)
-  <a id="test_download" target="_blank"> > Download <img src="/<?php echo $base_dir;?>/img/download.png"></a>
-    <PRE  class = "modelscript" style="font-size: 10px;display: none;">
-  </span>
+    <br>
+    <sapn style="font-size: 30px;">Test Script (.txt)
+      <a id="test_download" target="_blank"> > Download <img src="/<?php echo $base_dir;?>/img/download.png"></a>
+    </span>
 
-model Project
-
--- classes
-
-<?php for($i = 0; $i < count($elements); $i++): ?>
-class <?php echo h($elements[$i]['Label']['name']);?>
-
-
-<?php if(!empty($elements[$i]['Attribute']) || ($elements[$i]['Label']['id'] == $label['Label']['id'])): ?>
-attributes
-<?php if($elements[$i]['Label']['id'] == $label['Label']['id']): ?>
-  result : Boolean
-<?php endif; ?>
-<?php for($j = 0; $j < count($elements[$i]['Attribute']); $j++): ?>
- <?php echo h($elements[$i]['Attribute'][$j]['name']);?> : <?php echo h($TYPE[$elements[$i]['Attribute'][$j]['type']]);?>
-
-<?php endfor; ?>
-<?php endif; ?>
-
-
-<?php if(!empty($elements[$i]['Method'])): ?>
-operations
-
-<?php for($j = 0; $j < count($elements[$i]['Method']); $j++): ?>
- <?php echo h($elements[$i]['Method'][$j]['name']);?>() : Boolean = true
-<?php endfor; ?>
-
-end
-<?php else: ?>
-end
-<?php endif; ?>
-
-<?php endfor; ?>
-
-
--- associations
-
-<?php for($i = 0; $i < count($elements); $i++): ?>
-<?php for($j = 0; $j < count($elements[$i]['Relation']); $j++)  : ?>
-association access_<?php echo h($elements[$i]['Relation'][$j]['id']);?> between
-  <?php echo h($elements[$i]['Label']['name']);?>[1]
-  <?php echo h($elements[$i]['Relation'][$j]['name']);?>[1]
-end
-<?php endfor; ?>
-<?php endfor; ?>
-
-
--- OCL constraints
-
-
-constraints
-
-context <?php echo h($label['Label']['name']);?>  
-  inv <?php echo h($label['Label']['name']);?>   :
-   if self.show_ui.administrator.access_right = true and
-      self.show_ui.administrator.is_reqular_user = true 
-   then
-    self.result = true
-   else
-    self.result = false
-  endif   
-
-
-
-    </PRE>
   </div>
 
   <div class="col-md-6">
+
+
+<!--  パターン名前-->
+<?php $rback_name = ""; ?>
+<?php $password_and_use_name = ""; ?>
+<?php $rback_method = ""; ?>
+<?php $password_and_use_method = ""; ?>
+
+
+<!-- 引数の生成 -->
+<?php $argument  = array(); ?>
+<?php for($t = 0; $t < count($security_design_requirement); $t++): ?>
+  <?php for($p = 0; $p < count($security_design_requirement[$t]['PatternBind']); $p++): ?>
+    <?php $argument[] = $security_design_requirement[$t]['PatternBind'][$p]['Label']['name']?>
+  <?php endfor; ?>
+<?php endfor; ?>
+<?php $argument = array_unique($argument); ?>
+<?php sort($argument); ?>
+
+
     <PRE class = "testscript" style="font-size: 10px;display: none;">
 
 -- Test Case
 
 -- Create instances
+
 <?php for($i = 0; $i < count($elements); $i++): ?>
  !create <?php echo h($elements[$i]['Label']['name']);?> : <?php echo h($elements[$i]['Label']['name']);?>
 
@@ -179,8 +132,29 @@ context <?php echo h($label['Label']['name']);?>
 
 -- Execute Method
 
-!set <?php echo h($label['Label']['name']);?>.result := <?php echo h($label['Label']['name']);?>.<?php echo h($label['Method']['name']);?>()
+<?php for($i = 0; $i < count($elements); $i++): ?>
+<?php for($t = 0; $t < count($security_design_requirement); $t++): ?>
+<?php if($elements[$i]['Label']['id'] == $security_design_requirement[$t]['PatternBind'][0]['Label']['id']): ?>
+<!-- RBAC -->
+<?php if($security_design_requirement[$t]['Pattern']['id'] == 1): ?>
+<?php $rback_name = $elements[$i]['Label']['name']; ?>
+<?php for($j = 0; $j < count($elements[$i]['Method']); $j++): ?><?php echo h($elements[$i]['Method'][$j]['name']);?><?php $rback_method = $elements[$i]['Method'][$j]['name'];?><?php endfor; ?>(<?php echo $security_design_requirement[$t]['PatternBind'][1]['Label']['name']?> : <?php echo $security_design_requirement[$t]['PatternBind'][1]['Label']['name']?>, <?php echo $security_design_requirement[$t]['PatternBind'][2]['Label']['name']?> : <?php echo $security_design_requirement[$t]['PatternBind'][2]['Label']['name']?>, <?php echo $security_design_requirement[$t]['PatternBind'][3]['Label']['name']?> : <?php echo $security_design_requirement[$t]['PatternBind'][3]['Label']['name']?> )
+<?php endif; ?>
 
+<!-- Password & Use -->
+<?php if($security_design_requirement[$t]['Pattern']['id'] == 2): ?>
+<?php $password_and_use_name = $elements[$i]['Label']['name']; ?>
+
+<?php if(!empty($elements[$i]['Method'])): ?>
+
+  <?php for($j = 0; $j < count($elements[$i]['Method']); $j++): ?><?php $password_and_use_method = $elements[$i]['Method'][$j]['name'];?><?php echo h($elements[$i]['Method'][$j]['name']);?><?php endfor; ?>(<?php echo $security_design_requirement[$t]['PatternBind'][2]['Label']['name']?> : <?php echo $security_design_requirement[$t]['PatternBind'][2]['Label']['name']?>, <?php echo $security_design_requirement[$t]['PatternBind'][3]['Label']['name']?> : <?php echo $security_design_requirement[$t]['PatternBind'][3]['Label']['name']?> )
+<?php endif; ?>
+<?php endif; ?>
+<?php endif; ?>
+<?php endfor; ?>
+<?php endfor; ?>
+
+!set <?php echo h($label['Label']['name']);?>.result := <?php echo h($label['Label']['name']);?>.<?php echo h($label['Method']['name']);?>(<?php for($t = 0; $t < count($argument); $t++): ?><?php echo $argument[$t];?><?php if($t < count($argument) - 1): ?>,<?php endif; ?><?php endfor; ?>)
     </PRE>
   </div>
 </div>

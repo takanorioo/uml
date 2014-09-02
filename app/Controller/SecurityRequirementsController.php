@@ -14,6 +14,7 @@ class SecurityRequirementsController extends AppController
     public $uses = array(
         'SecurityRequirement',
         'CountermeasureBind',
+        'TargetFunction'
         );
     public $helpers = array('Html', 'Form');
     public $layout = 'base';
@@ -28,6 +29,61 @@ class SecurityRequirementsController extends AppController
     {
         parent::beforeFilter();
         $this->Auth->deny();
+    }
+
+     /**
+     * index
+     * @param:
+     * @author: T.Kobashi
+     * @since: 1.0.0
+     */
+    public function target($method_id = null)
+    {
+
+        //不正アクセス
+        if (!isset($method_id)) {
+            throw new BadRequestException();
+        }
+
+        //Method情報を取得
+        $method = $this->Method->getMethod($method_id);
+        $this->set('method', $method);
+
+        //対策のリスト
+        $countermeasures = $this->Countermeasure->getCountermeasures();
+        for($i = 0; $i < count($countermeasures); $i++) {
+            $countermeasure_list[$countermeasures[$i]['Countermeasure']['id']] = $countermeasures[$i]['Countermeasure']['name'];
+        }
+
+        $this->set('countermeasures', $countermeasures);
+        $this->set('countermeasure_list', $countermeasure_list);
+        
+
+        //TargetFunctionと対策をセット
+        if (!empty($this->request->data['addCountermeasure'])) {
+
+            $request_data = $this->request->data;
+
+            for($i = 0; $i < count($request_data['Countermeasure']); $i++) {
+
+                // トランザクション処理
+                $this->SecurityRequirement->create();
+                $this->SecurityRequirement->begin();
+
+                $data['SecurityRequirement']['method_id'] = $method['Method']['id'];
+                $data['SecurityRequirement']['countermeasure_id'] = $request_data['Countermeasure'][$i];
+                $data['SecurityRequirement']['project_id'] = $this->Session->read('Project.id');
+                
+                if (!$this->SecurityRequirement->save($data['SecurityRequirement'],false,array('method_id','countermeasure_id','project_id'))) {
+                    $this->SecurityRequirement->rollback();
+                    throw new InternalErrorException();
+                }
+                $this->SecurityRequirement->commit();
+            }
+            
+            $this->Session->setFlash('You successfully Set Target Function.', 'default', array('class' => 'alert alert-success'));
+            $this->redirect(array('controller' => 'SecurityRequirements', 'action' => 'table', $method_id));
+        }
     }
 
     /**
@@ -53,6 +109,7 @@ class SecurityRequirementsController extends AppController
         // SecurityRequirement
         $security_requirement = $this->SecurityRequirement->getSecurityRequirement($method_id);
         $this->set('security_requirement', $security_requirement);
+ 
 
          //TargetFunctionと対策をセット
         if (!empty($this->request->data['setBind'])) {
@@ -92,22 +149,22 @@ class SecurityRequirementsController extends AppController
      * @author: T.Kobashi
      * @since: 1.0.0
      */
-    public function delete($method_id = null)
+    public function delete($id = null)
     {
         //不正アクセス
-        if (!isset($method_id)) {
-            throw new BadRequestException();
-        }
-        // トランザクション処理始め
-        $this->SecurityRequirement->begin();
-
-        $conditions = array('SecurityRequirement.method_id' => $method_id);
-        if (!$this->SecurityRequirement->deleteAll($conditions, false)) {
-            $this->SecurityRequirement->rollback();
+        if (!isset($id)) {
             throw new BadRequestException();
         }
 
-        $this->SecurityRequirement->commit();
+         // トランザクション処理始め
+        $this->TargetFunction->begin();
+
+        if (!$this->TargetFunction->delete($id)) {
+            $this->TargetFunction->rollback();
+            throw new BadRequestException();
+        }
+
+        $this->TargetFunction->commit();
 
         $this->Session->setFlash('You successfully delete.', 'default', array('class' => 'alert alert-success'));
         $this->redirect($this->referer());

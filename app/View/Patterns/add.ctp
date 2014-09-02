@@ -1,4 +1,3 @@
-
 <script>
 
 	//属性の追加
@@ -10,7 +9,7 @@
 
 	var count = 1;
 	$("#add_attribute").click(function(){
-		$(".add_attribute").append('<tr><td><select name="data[Attribute][type]['+count+']" class="form-control">'+option+'</select></td><td><input name="data[Attribute][name]['+count+']" id="" class="form-control" placeholder="AttributeName" type="text"/></td></tr>');
+		$(".add_attribute").append('<tr><td><select name="data[PatternAttribute][type]['+count+']" class="form-control">'+option+'</select></td><td><input name="data[PatternAttribute][name]['+count+']" id="" class="form-control" placeholder="AttributeName" type="text"/></td></tr>');
 		count ++;
 	});
 });
@@ -24,7 +23,7 @@
 
 	var count = 1;
 	$("#add_method").click(function(){
-		$(".add_method").append('<tr><td><select name="data[Method][type]['+count+']" class="form-control">'+option+'</select></td><td><input name="data[Method][name]['+count+']" id="" class="form-control" placeholder="MethodName" type="text"/></td></tr>');
+		$(".add_method").append('<tr><td><select name="data[PatternMethod][type]['+count+']" class="form-control">'+option+'</select></td><td><input name="data[PatternMethod][name]['+count+']" id="" class="form-control" placeholder="MethodName" type="text"/></td></tr>');
 		count ++;
 	});
 
@@ -39,7 +38,7 @@
 
 	var count = 1;
 	$("#add_relation").click(function(){
-		$(".add_relation").append('<tr><td><select name="data[Relation][id]['+count+']"class="form-control">'+option_relation+'</select></td></tr>');
+		$(".add_relation").append('<tr><td><select name="data[PatternRelation][id]['+count+']"class="form-control">'+option_relation+'</select></td></tr>');
 		count ++;
 	});
 });
@@ -53,7 +52,7 @@
 				<p style="font-size: 40px;margin-left: 10px;">Add Element</p>
 			</div>
 		</div>
-		<?php echo $this->Form->create('Label'); ?>
+		<?php echo $this->Form->create('PatternElement'); ?>
 		<div class="row">
 			<div class="col-md-8 well">
 				<table class="table table-hover">
@@ -65,8 +64,8 @@
 					</thead>
 					<tbody>
 						<tr>
-							<td><?php echo $this->Form->input('Label.interface', array('label' => false, 'div' => false, 'id' => '', 'type' => 'text', 'class' => 'form-control', 'placeholder' => 'StereoType', 'error'=>false)); ?></td>
-							<td><?php echo $this->Form->input('Label.name', array('label' => false, 'div' => false, 'id' => '', 'type' => 'text', 'class' => 'form-control', 'placeholder' => 'Element Name', 'error'=>false)); ?></td>
+							<td><?php echo $this->Form->input('PatternElement.interface', array('label' => false, 'div' => false, 'id' => '', 'type' => 'text', 'class' => 'form-control', 'placeholder' => 'StereoType', 'error'=>false)); ?></td>
+							<td><?php echo $this->Form->input('PatternElement.element', array('label' => false, 'div' => false, 'id' => '', 'type' => 'text', 'class' => 'form-control', 'placeholder' => 'Element Name', 'error'=>false)); ?></td>
 						</tr>
 					</tbody>
 				</table>
@@ -86,9 +85,9 @@
 					</thead>
 					<tbody class="add_attribute">
 						<tr>
-							<td><?php echo $this->Form->input('Attribute.type.0', array('label' => false, 'div' => false, 'id' => false, 'type' => 'select', 'options' => $TYPE, 'class' => 'form-control', 'empty' => '----', 'error'=>false)); ?>
+							<td><?php echo $this->Form->input('PatternAttribute.type.0', array('label' => false, 'div' => false, 'id' => false, 'type' => 'select', 'options' => $TYPE, 'class' => 'form-control', 'empty' => '----', 'error'=>false)); ?>
 							</td>
-							<td><?php echo $this->Form->input('Attribute.name.0', array('label' => false, 'div' => false, 'id' => '', 'type' => 'text', 'class' => 'form-control', 'placeholder' => 'AttributeName', 'error'=>false)); ?></td>
+							<td><?php echo $this->Form->input('PatternAttribute.name.0', array('label' => false, 'div' => false, 'id' => '', 'type' => 'text', 'class' => 'form-control', 'placeholder' => 'AttributeName', 'error'=>false)); ?></td>
 						</tr>
 					</tbody>
 				</table>
@@ -106,14 +105,14 @@
 					</thead>
 					<tbody class="add_method">
 						<tr>
-							<td><?php echo $this->Form->input('Method.type.0', array('label' => false, 'div' => false, 'id' => false, 'type' => 'select', 'options' => $RETURNVALUE, 'class' => 'form-control', 'empty' => '----', 'error'=>false)); ?>
+							<td><?php echo $this->Form->input('PatternMethod.type.0', array('label' => false, 'div' => false, 'id' => false, 'type' => 'select', 'options' => $RETURNVALUE, 'class' => 'form-control', 'empty' => '----', 'error'=>false)); ?>
 							</td>
-							<td><?php echo $this->Form->input('Method.name.0', array('label' => false, 'div' => false, 'id' => '', 'type' => 'text', 'class' => 'form-control', 'placeholder' => 'MethodName', 'error'=>false)); ?></td>
+							<td><?php echo $this->Form->input('PatternMethod.name.0', array('label' => false, 'div' => false, 'id' => '', 'type' => 'text', 'class' => 'form-control', 'placeholder' => 'MethodName', 'error'=>false)); ?></td>
 						</tr>
 					</tbody>
 				</table>
 			</div>
-			<?php if(!empty($elements)): ?>
+			<?php if(!empty($pattern_elements)): ?>
 			<div class="col-md-4 well element">
 				<p style="text-align: right;">
 					<input id="add_relation" type="button" class ="btn btn-success" value="+" />
@@ -127,7 +126,7 @@
 					<tbody class="add_relation">
 						<tr>
 							<?php if(isset($relation)): ?>
-							<td><?php echo $this->Form->input('Relation.id.0', array('label' => false, 'div' => false, 'id' => false, 'type' => 'select', 'options' => $relation, 'empty' => '----', 'class' => 'form-control', 'error'=>false)); ?>
+							<td><?php echo $this->Form->input('PatternRelation.id.0', array('label' => false, 'div' => false, 'id' => false, 'type' => 'select', 'options' => $relation, 'empty' => '----', 'class' => 'form-control', 'error'=>false)); ?>
 							</td>
 							<?php endif; ?>
 						</tr>

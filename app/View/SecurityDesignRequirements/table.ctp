@@ -5,6 +5,7 @@
 
 <h3 style="padding-top: 50px;">▶ Selected Patterns of <span class = "red"> "<?php echo h($method['Method']['name']);?>"</span> process</h3>
 
+<?php if (!empty($security_design_requirement)): ?>
 <table class="table table-bordered">
 	<thead>
 		<tr style="background: lightgray;">
@@ -19,11 +20,14 @@
 				<td><?php echo $i + 1;?></td>
 				<td><?php echo h($security_design_requirement[$i]['Pattern']['name']);?></td>
 				<td style="text-align: center;"><img src="/<?php echo $base_dir;?>/img/delete_icon.png" style="margin-top: 5px;"></td>
-			</tr>
+			</tr>	
 		<?php endfor; ?>
 
 	</tbody>
 </table>
+<?php else: ?>
+	Please Select Security Desing Patterns
+<?php endif; ?>
 
 <h3>▶ Security Design Requirements of <span class = "red"> "<?php echo $method['Method']['name'];?>"</span> process</h3>
 
@@ -145,9 +149,13 @@
 		</tbody>
 	</table>
 
-	<h3><a href="/<?php echo $base_dir;?>/element/sdr_testcasedata/<?php echo h($method['Method']['id']);?>" class ="btn btn-primary">Input Concreate Value</a></h3>
+<div style="float: right;">
+	<h1 style="padding-left: 160px;"><a href="/<?php echo $base_dir;?>/element/sdr_model_script_data/<?php echo h($method['Method']['id']);?>" class ="btn btn-primary">Create Model Script</a></h1>
+	<h1 style="margin-top: -44px;"><a href="/<?php echo $base_dir;?>/element/sdr_testcasedata/<?php echo h($method['Method']['id']);?>" class ="btn btn-primary">Create Test Script</a></h1>
+</div>
+
 
 <?php else: ?>
-	パターンを選択してください。
+	Please bind Pattern elemetns
 <?php endif; ?>
 

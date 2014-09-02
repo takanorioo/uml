@@ -20,7 +20,10 @@ class ElementController extends AppController
         'Pattern',
         'Project',
         'SecurityRequirement',
-        'SecurityDesignRequirement'
+        'SecurityDesignRequirement',
+        'TargetFunction',
+        'Behavior',
+        'BehaviorRelation'
         );
     public $helpers = array('Html', 'Form');
     public $layout = 'base';
@@ -94,7 +97,6 @@ class ElementController extends AppController
 
             $request_data = $this->request->data;
 
-
             // トランザクション処理
             $this->Label->begin();
 
@@ -117,7 +119,7 @@ class ElementController extends AppController
 
                         //初期化
                         $data = array();
-
+                        
                         // // トランザクション処理
                         $this->Attribute->create();
                         $this->Attribute->begin();
@@ -142,7 +144,7 @@ class ElementController extends AppController
                 for($i = 0; $i < count($request_data['Method']['type']); $i++) {
 
 
-                        //初期化
+                    //初期化
                     $data = array();
 
                         // // トランザクション処理
@@ -423,38 +425,23 @@ class ElementController extends AppController
      */
     public function target()
     {
-        //対策のリスト
-        $countermeasures = $this->Countermeasure->getCountermeasures();
-        for($i = 0; $i < count($countermeasures); $i++) {
-            $countermeasure_list[$countermeasures[$i]['Countermeasure']['id']] = $countermeasures[$i]['Countermeasure']['name'];
-        }
-
-        $this->set('countermeasures', $countermeasures);
-        $this->set('countermeasure_list', $countermeasure_list);
-        
 
         //TargetFunctionと対策をセット
         if (!empty($this->request->data['addTargetFunction'])) {
 
             $request_data = $this->request->data;
 
+            // トランザクション処理
+            $this->TargetFunction->begin();
 
-            for($i = 0; $i < count($request_data['Countermeasure']); $i++) {
+            $data['TargetFunction']['method_id'] = $request_data['Label']['Method'];
+            $data['TargetFunction']['project_id'] = $this->Session->read('Project.id');
 
-                // トランザクション処理
-                $this->SecurityRequirement->create();
-                $this->SecurityRequirement->begin();
-
-                $data['SecurityRequirement']['method_id'] = $request_data['Label']['Method'];
-                $data['SecurityRequirement']['countermeasure_id'] = $request_data['Countermeasure'][$i];
-                $data['SecurityRequirement']['project_id'] = $this->Session->read('Project.id');
-                
-                if (!$this->SecurityRequirement->save($data['SecurityRequirement'],false,array('method_id','countermeasure_id','project_id'))) {
-                    $this->SecurityRequirement->rollback();
-                    throw new InternalErrorException();
-                }
-                $this->SecurityRequirement->commit();
+            if (!$this->TargetFunction->save($data['TargetFunction'],false,array('method_id','project_id'))) {
+                $this->TargetFunction->rollback();
+                throw new InternalErrorException();
             }
+            $this->TargetFunction->commit();
             
             $this->Session->setFlash('You successfully Set Target Function.', 'default', array('class' => 'alert alert-success'));
             $this->redirect(array('controller' => 'Element', 'action' => 'target_list'));
@@ -473,24 +460,22 @@ class ElementController extends AppController
         $project_id = $this->Session->read('Project.id');
 
         //要素の取得
-        $security_requirements = $this->SecurityRequirement->getSecurityRequirements($project_id);
+        $target_functions = $this->TargetFunction->getTargetFunctions($project_id);
 
         $target_methods = array();
 
-        //データの加工
-        for($i = 0; $i < count($security_requirements); $i++) {
-            if (!in_array($security_requirements[$i]['Method']['id'], $target_methods)) {
+         //データの加工
+        for($i = 0; $i < count($target_functions); $i++) {
 
-                // メソッドからラベル名を取得
-                $label = array();
-                $label = $this->Method->getLabel($security_requirements[$i]['Method']['id']);
+            // メソッドからラベル名を取得
+            $label = array();
+            $label = $this->Method->getLabel($target_functions[$i]['Method']['id']);
 
-
-                $target_methods[] = $security_requirements[$i]['Method']['id'];
-                $target_methods['id'][] = $security_requirements[$i]['Method']['id'];
-                $target_methods['name'][] = $label['Label']['name']." : ".$security_requirements[$i]['Method']['name'];
-            }
+            $target_methods[] = $target_functions[$i]['TargetFunction']['id'];
+            $target_methods['id'][] = $target_functions[$i]['Method']['id'];
+            $target_methods['name'][] = $label['Label']['name']." : ".$target_functions[$i]['Method']['name'];
         }
+
         $this->set('target_methods', $target_methods);
     }
 
@@ -531,10 +516,12 @@ class ElementController extends AppController
         if (!isset($method_id)) {
             throw new BadRequestException();
         }
+
         
         if(!empty($this->request->query['attribute'])) {
 
             $attribute = $this->request->query['attribute'];
+
 
             for($i = 0; $i < count($attribute); $i++) {
 
@@ -546,6 +533,7 @@ class ElementController extends AppController
 
 
                 $attribute_id = $this->Attribute->getAttributeIdByName($attribute_detail[1]);
+
 
                 if(empty($attribute_id['Attribute']['id'])) {
 
@@ -581,7 +569,7 @@ class ElementController extends AppController
         if (!isset($method_id)) {
             throw new BadRequestException();
         }
-        
+
         if(!empty($this->request->query['attribute'])) {
 
             $attribute = $this->request->query['attribute'];
@@ -617,6 +605,8 @@ class ElementController extends AppController
         }        
         $this->redirect(array('controller' => 'Element', 'action' => 'sdr_testcase', $method_id));
     }
+
+    
 
      /**
      * delete
@@ -665,7 +655,7 @@ class ElementController extends AppController
             }
             $this->set('attributes', $attributes);
 
-            $this->render('testscript');
+            $this->render('sr_testscript');
         }
     }
 
@@ -693,8 +683,20 @@ class ElementController extends AppController
         $security_design_requirement = $this->SecurityDesignRequirement->getSecurityDesignRequirement($method_id);
         $this->set('security_design_requirement', $security_design_requirement);
 
+        $non_factor = array();
+        for($t = 0; $t < count($security_design_requirement); $t++) {
+            if($security_design_requirement[$t]['Pattern']['id'] == 1) {
+                $non_factor[] = $security_design_requirement[$t]['PatternBind'][4]['Label']['id'];
+            }
+            if($security_design_requirement[$t]['Pattern']['id'] == 2) {
+                $non_factor[] = $security_design_requirement[$t]['PatternBind'][1]['Label']['id'];
+            }
+        }
+        $this->set('non_factor', $non_factor);
+
         $security_design_requirement_count = pow (2, count($security_design_requirement));
         $this->set('security_design_requirement_count', $security_design_requirement_count);
+
 
         $td_rowspan = count($security_design_requirement) * 2 + 2;
         $this->set('td_rowspan', $td_rowspan);
@@ -716,7 +718,189 @@ class ElementController extends AppController
                 $attributes[$attribute_ids[$i]]['attribute_name'] = $attribute_name['Attribute']['name'];
             }
             $this->set('attributes', $attributes);
-            $this->render('testscript');
+            $this->render('sdr_testscript');
         }
+    }
+
+    /**
+     * delete
+     * @param:
+     * @author: T.Kobashi
+     * @since: 1.0.0
+     */
+    public function sr_model_script_data($method_id = null)
+    {
+
+        //不正アクセス
+        if (!isset($method_id)) {
+            throw new BadRequestException();
+        }
+        
+        if(!empty($this->request->query['attribute'])) {
+
+            $attribute = $this->request->query['attribute'];
+
+            for($i = 0; $i < count($attribute); $i++) {
+
+                //初期化
+                $data = array();
+                $attribute_detail = array();
+
+                $attribute_detail = explode(".", $attribute[$i]);
+
+
+                $attribute_id = $this->Attribute->getAttributeIdByName($attribute_detail[1]);
+
+                if(empty($attribute_id['Attribute']['id'])) {
+
+                    // トランザクション処理
+                    $this->Attribute->create();
+                    $this->Attribute->begin();
+
+                    $data['Attribute']['type'] = $attribute_detail[2];
+                    $data['Attribute']['name'] = $attribute_detail[1];
+                    $data['Attribute']['label_id'] = $attribute_detail[0];
+
+                    if (!$this->Attribute->save($data['Attribute'],false,array('type','name','label_id'))) {
+                        $this->Attribute->rollback();
+                        throw new InternalErrorException();
+                    }
+                    $this->Attribute->commit();
+                }
+            }
+        }        
+        $this->redirect(array('controller' => 'Element', 'action' => 'sr_model_script', $method_id));
+    }
+
+    /**
+     * delete
+     * @param:
+     * @author: T.Kobashi
+     * @since: 1.0.0
+     */
+    public function sdr_model_script_data($method_id = null)
+    {
+
+        //不正アクセス
+        if (!isset($method_id)) {
+            throw new BadRequestException();
+        }
+        
+        if(!empty($this->request->query['attribute'])) {
+
+            $attribute = $this->request->query['attribute'];
+
+            for($i = 0; $i < count($attribute); $i++) {
+
+                //初期化
+                $data = array();
+                $attribute_detail = array();
+
+                $attribute_detail = explode(".", $attribute[$i]);
+
+
+                $attribute_id = $this->Attribute->getAttributeIdByName($attribute_detail[1]);
+
+                if(empty($attribute_id['Attribute']['id'])) {
+
+                    // トランザクション処理
+                    $this->Attribute->create();
+                    $this->Attribute->begin();
+
+                    $data['Attribute']['type'] = $attribute_detail[2];
+                    $data['Attribute']['name'] = $attribute_detail[1];
+                    $data['Attribute']['label_id'] = $attribute_detail[0];
+
+                    if (!$this->Attribute->save($data['Attribute'],false,array('type','name','label_id'))) {
+                        $this->Attribute->rollback();
+                        throw new InternalErrorException();
+                    }
+                    $this->Attribute->commit();
+                }
+            }
+        }        
+        $this->redirect(array('controller' => 'Element', 'action' => 'sdr_model_script', $method_id));
+    }
+
+    /**
+     * delete
+     * @param:
+     * @author: T.Kobashi
+     * @since: 1.0.0
+         */
+    public function sr_model_script($method_id = null) 
+    {
+        //プロジェクトIDの取得   
+        $project_id = $this->Session->read('Project.id');
+
+        //不正アクセス
+        if (!isset($method_id)) {
+            throw new BadRequestException();
+        }
+
+        //Method情報を取得
+        $method = $this->Method->getMethod($method_id);
+        $this->set('method', $method);
+
+        // SecurityRequirement
+        $security_requirement = $this->SecurityRequirement->getSecurityRequirement($method_id);
+        $this->set('security_requirement', $security_requirement);
+
+        $security_requirement_count = count($security_requirement);
+        $this->set('security_requirement_count', $security_requirement_count);
+
+        $label = $this->Method->getLabel($method_id);
+        $this->set('label', $label);
+
+        $behavior_uis = $this->Behavior->getBehaviorUIs($method_id);
+        $this->set('behavior_uis', $behavior_uis);
+
+        $behavior_actor = $this->Behavior->getBehaviorActor($method_id);
+        $this->set('behavior_actor', $behavior_actor);
+
+        $this->render('sr_model_script');
+    }
+
+    /**
+     * delete
+     * @param:
+     * @author: T.Kobashi
+     * @since: 1.0.0
+         */
+    public function sdr_model_script($method_id = null) 
+    {
+        //プロジェクトIDの取得   
+        $project_id = $this->Session->read('Project.id');
+
+        //不正アクセス
+        if (!isset($method_id)) {
+            throw new BadRequestException();
+        }
+
+        //Method情報を取得
+        $method = $this->Method->getMethod($method_id);
+        $this->set('method', $method);
+
+        // SecurityRequirement
+        $security_requirement = $this->SecurityRequirement->getSecurityRequirement($method_id);
+        $this->set('security_requirement', $security_requirement);
+
+        $security_requirement_count = count($security_requirement);
+        $this->set('security_requirement_count', $security_requirement_count);
+
+        $label = $this->Method->getLabel($method_id);
+        $this->set('label', $label);
+
+        $behavior_uis = $this->Behavior->getBehaviorUIs($method_id);
+        $this->set('behavior_uis', $behavior_uis);
+
+        $behavior_actor = $this->Behavior->getBehaviorActor($method_id);
+        $this->set('behavior_actor', $behavior_actor);
+
+        //Method情報を取得
+        $security_design_requirement = $this->SecurityDesignRequirement->getSecurityDesignRequirement($method_id);
+        $this->set('security_design_requirement', $security_design_requirement);
+
+        $this->render('sdr_model_script');
     }
 }
