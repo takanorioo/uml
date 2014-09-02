@@ -147,8 +147,8 @@
 	</table>
 
 	<div style="float: right;">
-		<h1 style="padding-left: 160px;"><a href="/<?php echo $base_dir;?>/element/sr_model_script_data/<?php echo h($method['Method']['id']);?>" class ="btn btn-primary">Create Model Script</a></h1>
-		<h1 style="margin-top: -44px;"><a href="/<?php echo $base_dir;?>/element/sr_testcasedata/<?php echo h($method['Method']['id']);?><?php pr($conditions); ?>" class ="btn btn-primary">Create Test Script</a></h1>
+		<h1 style="padding-left: 160px;"><a href="/<?php echo $base_dir;?>/element/sr_model_script_data/<?php echo h($method['Method']['id']);?><?php echo $conditions; ?>" class ="btn btn-primary">Create Model Script</a></h1>
+		<h1 style="margin-top: -44px;"><a href="/<?php echo $base_dir;?>/element/sr_testcasedata/<?php echo h($method['Method']['id']);?><?php echo $conditions; ?>" class ="btn btn-primary">Create Test Script</a></h1>
 	</div>
 
 
