@@ -531,7 +531,6 @@ class ElementController extends AppController
 
                 $attribute_detail = explode(".", $attribute[$i]);
 
-
                 $attribute_id = $this->Attribute->getAttributeIdByName($attribute_detail[1]);
 
 
@@ -541,11 +540,15 @@ class ElementController extends AppController
                     $this->Attribute->create();
                     $this->Attribute->begin();
 
+                    if(!empty($attribute_id)) {
+                        $data['Attribute']['id'] = $attribute_id;
+                    }
+
                     $data['Attribute']['type'] = $attribute_detail[2];
                     $data['Attribute']['name'] = $attribute_detail[1];
                     $data['Attribute']['label_id'] = $attribute_detail[0];
 
-                    if (!$this->Attribute->save($data['Attribute'],false,array('type','name','label_id'))) {
+                    if (!$this->Attribute->save($data['Attribute'],false,array('id','type','name','label_id'))) {
                         $this->Attribute->rollback();
                         throw new InternalErrorException();
                     }
@@ -582,7 +585,6 @@ class ElementController extends AppController
 
                 $attribute_detail = explode(".", $attribute[$i]);
 
-
                 $attribute_id = $this->Attribute->getAttributeIdByName($attribute_detail[1]);
 
                 if(empty($attribute_id['Attribute']['id'])) {
@@ -591,11 +593,15 @@ class ElementController extends AppController
                     $this->Attribute->create();
                     $this->Attribute->begin();
 
+                    if(!empty($attribute_id)) {
+                        $data['Attribute']['id'] = $attribute_id;
+                    }
+
                     $data['Attribute']['type'] = $attribute_detail[2];
                     $data['Attribute']['name'] = $attribute_detail[1];
                     $data['Attribute']['label_id'] = $attribute_detail[0];
 
-                    if (!$this->Attribute->save($data['Attribute'],false,array('type','name','label_id'))) {
+                    if (!$this->Attribute->save($data['Attribute'],false,array('id','type','name','label_id'))) {
                         $this->Attribute->rollback();
                         throw new InternalErrorException();
                     }

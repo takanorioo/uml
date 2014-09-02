@@ -169,7 +169,9 @@ class BehaviorController extends AppController
             $this->redirect(array('controller' => 'Behavior', 'action' => 'index',$method_id));
         }
 
-        $this->request->data = $behaviors_data;
+        if(!empty($behaviors)) {
+            $this->request->data = $behaviors_data;
+        }
     }
 
     /**
