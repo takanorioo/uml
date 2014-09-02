@@ -217,6 +217,8 @@ class ElementController extends AppController
         if (!empty($this->request->data['addElement'])) {
 
             $request_data = $this->request->data;
+            pr($request_data);
+            return;
 
             // // トランザクション処理
             $this->Label->begin();
