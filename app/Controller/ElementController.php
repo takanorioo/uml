@@ -217,8 +217,6 @@ class ElementController extends AppController
         if (!empty($this->request->data['addElement'])) {
 
             $request_data = $this->request->data;
-            pr($request_data);
-            return;
 
             // // トランザクション処理
             $this->Label->begin();
@@ -261,18 +259,18 @@ class ElementController extends AppController
                 }
             }
 
-            for($i = 0; $i < count($request_data['Method']['type']); $i++) {
-                if(!empty($request_data['Method']['type'][$i]))  {
+            for($t = 0; $t < count($request_data['Method']['name']); $t++) {
+                if(!empty($request_data['Method']['name'][$t]))  {
 
                     //初期化
                     $data = array();
 
-                        // // トランザクション処理
+                    // // トランザクション処理
                     $this->Method->create();
                     $this->Method->begin();
 
-                    $data['Method']['type'] = $request_data['Method']['type'][$i];
-                    $data['Method']['name'] = $request_data['Method']['name'][$i];
+                    $data['Method']['type'] = $request_data['Method']['type'][$t];
+                    $data['Method']['name'] = $request_data['Method']['name'][$t];
                     $data['Method']['label_id'] = $label_id;
 
                     if (!$this->Method->save($data['Method'],false,array('type','name','label_id'))) {
