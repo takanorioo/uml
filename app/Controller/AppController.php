@@ -90,12 +90,14 @@ class AppController extends Controller
 
             //ユーザID取得
             $user_id= $this->me['User']['id'];
+            pr($user_id);
 
             // プロジェクト関連処理
             $projects = $this->Project->getProjects($user_id);
             $this->set('projects', $projects);
 
             $project_id = $this->Session->read('Project.id');
+            pr($project_id);
 
             if(empty($project_id))
             {
