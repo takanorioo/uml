@@ -138,6 +138,8 @@ class UsersController extends AppController
             $this->Auth->logout();
             $this->redirect($this->request->referer()); // 元いたページにリダイレクト
         }
+        $this->Session->destroy();
+        $this->Auth->logout();
         $this->redirect(array('controller' => '/', 'action' => 'index'));
     }
 
