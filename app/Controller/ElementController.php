@@ -705,7 +705,6 @@ class ElementController extends AppController
         //テストの実行
         if (!empty($this->request->data['executeTest'])) {
 
-
             $label = $this->Method->getLabel($method_id);
             $this->set('label', $label);
 
