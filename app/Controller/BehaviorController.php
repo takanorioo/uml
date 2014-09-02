@@ -109,6 +109,8 @@ class BehaviorController extends AppController
         if (!empty($this->request->data['editElement'])) {
 
             $request_data = $this->request->data;
+            pr($request_data);
+            return;
 
             for($i = 0; $i < count($request_data['Behavior']['type']); $i++) {
 
