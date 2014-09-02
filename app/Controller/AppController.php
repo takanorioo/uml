@@ -90,6 +90,7 @@ class AppController extends Controller
 
             //ユーザID取得
             $user_id= $this->me['User']['id'];
+            pr($user_id);
 
             // プロジェクト関連処理
             $projects = $this->Project->getProjects($user_id);
