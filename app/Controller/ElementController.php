@@ -748,7 +748,7 @@ class ElementController extends AppController
 
                 $attribute_id = $this->Attribute->getAttributeIdByName($attribute_detail[1]);
 
-                if(!empty($attribute_id)) {
+                if(empty($attribute_id)) {
 
                     // トランザクション処理
                     $this->Attribute->create();
