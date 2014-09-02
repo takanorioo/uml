@@ -97,23 +97,16 @@ class BehaviorController extends AppController
             }
 
             $this->set('behavior_action_count', $behavior_action_count);
-
             $this->set('behaviors_data', $behaviors_data);
-            $this->request->data = $behaviors_data;
-
         }
 
-
         $this->set('method_id', $method_id);
-        pr($this->request->data);
 
-        if (!empty($this->request->data['editElement'])) {
+        if (!empty($this->request->data['Behavior'])) {
 
             $request_data = $this->request->data;
 
-
             for($i = 0; $i < count($request_data['Behavior']['type']); $i++) {
-
 
                 //初期化
                 $data = array();
@@ -176,8 +169,7 @@ class BehaviorController extends AppController
             $this->redirect(array('controller' => 'Behavior', 'action' => 'index',$method_id));
         }
 
-        
-
+        $this->request->data = $behaviors_data;
     }
 
     /**

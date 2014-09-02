@@ -178,8 +178,7 @@ echo $this->Html->script(array('joint.shapes.erd'));
 
 						<div class="col-md-12">
 							<p style="text-align: center;">
-								<?php
-								echo $this->Form->submit('Edit Element', array('name' => 'confirm', 'div' => false, 'class' => 'btn btn-primary'));
+								<?php echo $this->Form->submit('Edit Element', array('name' => 'editElement', 'div' => false, 'class' => 'btn btn-primary'));
 								?>
 							</p>
 							<input type="hidden" name="token" value="<?php echo session_id();?>">
@@ -188,6 +187,7 @@ echo $this->Html->script(array('joint.shapes.erd'));
 						<?php echo $this->Form->end(); ?>
 					</div>
 				</div>
+				
 			</div>
 		</div>
 	</div>
@@ -241,7 +241,7 @@ echo $this->Html->script(array('joint.shapes.erd'));
 						<div class="col-md-12">
 							<p style="text-align: center;">
 								<?php
-								echo $this->Form->submit('Edit Action', array('name' => 'confirm', 'div' => false, 'class' => 'btn btn-primary'));
+								echo $this->Form->submit('Edit Action', array('name' => 'editAction', 'div' => false, 'class' => 'btn btn-primary'));
 								?>
 							</p>
 							<input type="hidden" name="token" value="<?php echo session_id();?>">
