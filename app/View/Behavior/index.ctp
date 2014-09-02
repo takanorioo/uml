@@ -18,6 +18,7 @@ echo $this->Html->script(array('joint.shapes.erd'));
 	$(function() {
 		var type_option = '<option value="">----</option>';
 		var element_option = '<option value="">----</option>';
+		var count = 0;
 
 		<?php for($i = 1; $i <= count($BEHAVIOR); $i++): ?>
 			type_option  += '<option value=<?php echo $i;?>><?php echo h($BEHAVIOR[$i]);?></option>'
@@ -27,7 +28,9 @@ echo $this->Html->script(array('joint.shapes.erd'));
 			element_option  += '<option value=<?php echo h($option_relation[$i]['id']);?>><?php echo h($option_relation[$i]['name']);?></option>'
 		<?php endfor; ?>
 
-		var count = <?php echo $behavior_count;?>;
+		<?php if(!empty($behavior_count)): ?>
+			var count = <?php echo $behavior_count;?>;
+		<?php endif; ?>
 
 		$("#add_behavior").click(function(){
 			$(".add_behavior").append('<tr><td><select name="data[Behavior][type]['+count+']" class="form-control">'+type_option+'</select></td><td><select name="data[Behavior][label_id]['+count+']" id="" class="form-control" placeholder="AttributeName">'+element_option+'</select></td></tr>');
@@ -39,17 +42,21 @@ echo $this->Html->script(array('joint.shapes.erd'));
 	$(function() {
 		var element_from_option = '<option value="">----</option>';
 		var element_to_option = '<option value="">----</option>';
+		var action_count = 0;
 
-	
-		<?php for($i = 0; $i < count($option_behabior_relation); $i++): ?>
-			element_from_option  += '<option value=<?php echo h($option_behabior_relation[$i]['id']);?>><?php echo h($option_behabior_relation[$i]['name']);?></option>'
-		<?php endfor; ?>
+		<?php if(!empty($option_behabior_relation)): ?>
+			<?php for($i = 0; $i < count($option_behabior_relation); $i++): ?>
+				element_from_option  += '<option value=<?php echo h($option_behabior_relation[$i]['id']);?>><?php echo h($option_behabior_relation[$i]['name']);?></option>'
+			<?php endfor; ?>
 
-		<?php for($i = 0; $i < count($option_behabior_relation); $i++): ?>
-			element_to_option  += '<option value=<?php echo h($option_behabior_relation[$i]['id']);?>><?php echo h($option_behabior_relation[$i]['name']);?></option>'
-		<?php endfor; ?>
+			<?php for($i = 0; $i < count($option_behabior_relation); $i++): ?>
+				element_to_option  += '<option value=<?php echo h($option_behabior_relation[$i]['id']);?>><?php echo h($option_behabior_relation[$i]['name']);?></option>'
+			<?php endfor; ?>
+		<?php endif; ?>
 
-		var action_count = <?php echo $behavior_action_count;?>;
+		<?php if(!empty($behavior_action_count)): ?>
+			var action_count = <?php echo $behavior_action_count;?>;
+		<?php endif; ?>
 
 		$("#add_action").click(function(){
 			$(".add_action").append('<tr><td><select name="data[BehaviorRelations][behavior_id]['+action_count+']" id="" class="form-control" placeholder="AttributeName">'+element_from_option+'</select></td><td><select name="data[BehaviorRelations][behavior_relation_id]['+action_count+']" id="" class="form-control" placeholder="AttributeName">'+element_to_option+'</select></td><td><input name="data[BehaviorRelations][guard]['+action_count+']" id="" class="form-control" placeholder="[Guard]" type="text"/></td><td><input name="data[BehaviorRelations][action]['+action_count+']" id="" class="form-control" placeholder="Action" type="text"/></td><td><input name="data[BehaviorRelations][order]['+action_count+']" id="" class="form-control" placeholder="order" type="text"/></td></tr>');
