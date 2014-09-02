@@ -160,7 +160,7 @@ attributes
 operations
   <?php for($j = 0; $j < count($elements[$i]['Method']); $j++): ?><?php $password_and_use_method = $elements[$i]['Method'][$j]['name'];?><?php echo h($elements[$i]['Method'][$j]['name']);?><?php endfor; ?>(<?php echo $security_design_requirement[$t]['PatternBind'][2]['Label']['name']?> : <?php echo $security_design_requirement[$t]['PatternBind'][2]['Label']['name']?>, <?php echo $security_design_requirement[$t]['PatternBind'][3]['Label']['name']?> : <?php echo $security_design_requirement[$t]['PatternBind'][3]['Label']['name']?> ) : Boolean = 
   if 
-    <?php echo $security_design_requirement[$t]['PatternBind'][2]['Label']['name']?>.id = <?php echo $security_design_requirement[$t]['PatternBind'][3]['Label']['name']?>.id and 
+    <?php echo $security_design_requirement[$t]['PatternBind'][2]['Label']['name']?>.email = <?php echo $security_design_requirement[$t]['PatternBind'][3]['Label']['name']?>.email and 
     <?php echo $security_design_requirement[$t]['PatternBind'][2]['Label']['name']?>.password = <?php echo $security_design_requirement[$t]['PatternBind'][3]['Label']['name']?>.password 
     then true
   else false 
@@ -307,7 +307,7 @@ context <?php echo h($label['Label']['name']);?>
 context <?php echo h($label['Label']['name']);?> 
   inv <?php echo h($security_design_requirement[$i]['Pattern']['name']);?>:
     if self.<?php echo h($security_design_requirement[$i]['PatternBind'][0]['Label']['name']);?>.<?php echo h($security_design_requirement[$i]['PatternBind'][3]['Label']['name']);?>->exists(p | 
-      p.id = self.<?php echo h($security_design_requirement[$i]['PatternBind'][0]['Label']['name']);?>.<?php echo h($security_design_requirement[$i]['PatternBind'][2]['Label']['name']);?>.id and 
+      p.email = self.<?php echo h($security_design_requirement[$i]['PatternBind'][0]['Label']['name']);?>.<?php echo h($security_design_requirement[$i]['PatternBind'][2]['Label']['name']);?>.email and 
       p.password = self.<?php echo h($security_design_requirement[$i]['PatternBind'][0]['Label']['name']);?>.<?php echo h($security_design_requirement[$i]['PatternBind'][2]['Label']['name']);?>.password) 
   then
     self.<?php for($j = 0; $j < count($behavior_uis); $j++): ?><?php echo h($behavior_uis[$j]['Label']['name']);?><?php endfor; ?>.<?php echo h($behavior_actor['Label']['name']);?>.regular_user = true  
